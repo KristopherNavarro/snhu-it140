@@ -1,13 +1,16 @@
 from datetime import datetime
 
-ask_name = input('What is your name? ')
-ask_age = int(input('What is your age? '))
+repeat = 'y'
 
-name = copy(ask_name)
-age = copy(ask_age)
-current_year = int(datetime.now().year)
+while (repeat == 'y'):
+    name = input('What is your name? ')
+    age = int(input('What is your age? '))
 
-year_born = current_year - age
+    current_year = int(datetime.now().year)
 
-print(f'''
-Hello, {name}! You were born in {year_born}.''')
+    year_born = current_year - age
+
+    print(f'''
+Hello, {name}! You were born in {year_born}.
+    ''')
+    repeat = input('Run again? y/n ')
