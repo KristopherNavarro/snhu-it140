@@ -14,3 +14,5 @@ while (repeat == 'y'):
 Hello, {name}! You were born in {year_born}.
     ''')
     repeat = input('Run again? y/n ')
+
+print('That was fun!')
