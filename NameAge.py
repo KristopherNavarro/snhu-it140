@@ -19,10 +19,9 @@ from datetime import datetime
 # this will reset the 'repeat' variable and break the loop if 'n'
 
 repeat = 'y'
-name = input('What is your name? ')
 
 while (repeat == 'y'):
-
+    name = input('What is your name? ')
     # Add a 'try' block to handle if user enters non-numeric characters
     # then add an 'except' block to handle any 'valueErrors' by printing
     # instructions for what is expected and restarting the loop
@@ -45,10 +44,9 @@ Hello, {name}! You were born in {year_born}.
             ''')
     else:
         print(f'''
-Hello, {name}! You were born in {abs(year_born)} BC! Whoa! Are you a Time Lord?.
+Hello, {name}! You were born in {abs(year_born)} BC! Whoa! Are you a Time Lord?
         ''')
 
     # Request user input asking 'Run again? y/n', assign to 'repeat' variable
     # 'y' will continue the loop, 'n' will break the loop, ending the program
     repeat = input('Run again? y/n ')
-
