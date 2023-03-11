@@ -11,14 +11,12 @@
 #                           Note: User input is not part of the program output.
 
 # Delete the input prompt string before submitting
-input1   = input('Enter a word: ')             
-input2   = input('Enter a second word: ')      
-input3   = input('Enter a number: ')           
+input1 = input('Enter a word: ')
+input2 = input('Enter a second word: ')
+input3 = input('Enter a number: ')
 
-password1 = f'{input1} {input2} {input3}'
-print(f'You entered: {password1}')
-
-
+concat_inputs = f'{input1} {input2} {input3}'
+print(f'You entered: {concat_inputs}\n')
 
 
 
@@ -34,13 +32,13 @@ print(f'You entered: {password1}')
 #                           First password: yellow_Daisy
 #                           Second password: 6yellow6'''
 
-password2 = f'{input1}_{input2}'
-password3 = f'{input3}{input1}{input3}'
+password1 = f'{input1}_{input2}'
+password2 = f'{input3}{input1}{input3}'
 
-print(f'''You entered: {password1}
+print(f'''You entered: {concat_inputs}
 
-First password: {password2}
-Second password: {password3}''')
+First password: {password1}
+Second password: {password2}''')
 
 
 
@@ -62,13 +60,13 @@ Second password: {password3}''')
 #                           Number of characters in 6yellow6: 8'''
 
 
-length_p2 = len(password2)
-length_p3 = len(password3)
+length_p2 = len(password1)
+length_p3 = len(password2)
 
-print(f'''You entered: {password1}
+print(f'''You entered: {concat_inputs}
 
-First password: {password2}
-Second password: {password3}
+First password: {password1}
+Second password: {password2}
 
-Number of characters in {password2}: {length_p2}
-Number of characters in {password3}: {length_p3}''')
+Number of characters in {password1}: {length_p2}
+Number of characters in {password2}: {length_p3}''')
