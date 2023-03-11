@@ -10,9 +10,14 @@
 #       the prompts is:    'You entered: yellow Daisy 6'
 #                           Note: User input is not part of the program output.
 
-input1_word   = input('Enter a word: ')             # Delete the input prompt string when submitting
-input2_word   = input('Enter a second word: ')      # Delete the input prompt string when submitting
-input3_number = input('Enter a number: ')           # Delete the input prompt string when submitting
+# Delete the input prompt string before submitting
+input1   = input('Enter a word: ')             
+input2   = input('Enter a second word: ')      
+input3   = input('Enter a number: ')           
+
+password1 = f'{input1} {input2} {input3}'
+print(f'You entered: {password1}')
+
 
 
 
@@ -28,6 +33,14 @@ input3_number = input('Enter a number: ')           # Delete the input prompt st
 #
 #                           First password: yellow_Daisy
 #                           Second password: 6yellow6'''
+
+password2 = f'{input1}_{input2}'
+password3 = f'{input3}{input1}{input3}'
+
+print(f'''You entered: {password1}
+
+First password: {password2}
+Second password: {password3}''')
 
 
 
@@ -49,4 +62,13 @@ input3_number = input('Enter a number: ')           # Delete the input prompt st
 #                           Number of characters in 6yellow6: 8'''
 
 
+length_p2 = len(password2)
+length_p3 = len(password3)
 
+print(f'''You entered: {password1}
+
+First password: {password2}
+Second password: {password3}
+
+Number of characters in {password2}: {length_p2}
+Number of characters in {password3}: {length_p3}''')
