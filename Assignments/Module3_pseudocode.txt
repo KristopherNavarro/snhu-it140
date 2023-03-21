@@ -1,0 +1,22 @@
+Kristopher Navarro
+Instructor Moore
+IT-140
+20 March 2023
+
+    Pseudocode
+
+ SET employee wage to 20
+ INPUT number of hours worked
+ 
+ CALCULATE regular pay as employee wage times hours worked
+ SET overtime hours to 0
+
+ IF hours worked is greater than 40
+    CALCULATE overtime hours by remainder of hours worked divided by 40
+    
+CALCULATE overtime pay by multiplying overtime hours times the product of employee wage times 1.5
+CALCULATE total pay by adding regular pay and overtime pay
+PRINT the total pay expressed as a dollar amount
+
+
+
