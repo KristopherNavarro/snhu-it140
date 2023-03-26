@@ -26,5 +26,11 @@ for ch in word:
 	else:
 		password += ch # if False, add the character to 'password'
 
+# concat 'q*s' to the end of 'password'
+password += 'q*s'
+
 # print the final password
 print(password)
+
+##################################################################3
+## RESULT: 100

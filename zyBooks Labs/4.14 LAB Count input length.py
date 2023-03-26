@@ -13,7 +13,6 @@
 # take user input and assign to user_test
 # create a set of ignored characters as null_char
 # create variable as 'char_count' assigned to 0, this will increment with all string characters not in the null_char set
-
 user_text = input()
 null_char = {' ', '.', ','}
 char_count = 0
@@ -22,9 +21,12 @@ char_count = 0
 for ch in user_text:
     # check if character is in null_char
     if ch in null_char: 
-        continue  # if True, continue loop
+        continue    # if True, continue loop
     else:
-        count += 1 #if False, add 1 to char_count
+        char_count += 1     # if False, add 1 to char_count
 
 # print the final count of accepted characters        
-print(count)
+print(char_count)
+
+#####################################################
+## RESULT: 100
