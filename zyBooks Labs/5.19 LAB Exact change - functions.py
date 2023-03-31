@@ -52,7 +52,13 @@ def exact_change(user_total):
     denominations = {'dollar':dollars, 'quarter':quarters, 'dime':dimes, 'nickel':nickels, 'penny':pennies}
 
     # return only the values of the denomination dict
-    return denominations.values()
+    num_dollars = denominations['dollar']
+    num_quarters = denominations['quarter']
+    num_dimes   = denominations['dime']
+    num_nickels = denominations['nickel']
+    num_pennies = denominations['penny']
+
+    return (num_dollars,num_quarters,num_dimes,num_nickels,num_pennies)
 
 if __name__ == '__main__':
     input_val = int(input())
@@ -79,8 +85,5 @@ if __name__ == '__main__':
                     print(v,
                           'pennies')  # if the 'pennies' variable is greater than 1, print 'pennies' instead of 'pennys'
 
-# The maximum grade I am receiving is 4/10
-# The grading systems states there is an incorrect number of values returned from the function call.
-# this is incorrect, as can be seen by the following output:
-
-    print(len(exact_change(input_val)))
+##################################################################################
+# GRADE: 10/10
