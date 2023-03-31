@@ -12,7 +12,20 @@
 #
 #############################################################################
 
-''' Define your function here. '''
+def swap_values(*args):
+    values = []
+    for v in args:
+        values.append(v)
 
-if __name__ == '__main__':
-    ''' Type your code here. Your code must call the function. '''
+    values.reverse()
+    return (values[0],values[1])
+
+
+# val1 = input()
+# val2 = input()
+#
+# rval1, rval2 = swap_values(val1, val2)
+#
+# print(rval1, rval2)
+
+# The max grade I am receiving is 8/10.
