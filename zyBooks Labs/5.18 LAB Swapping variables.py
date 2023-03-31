@@ -12,7 +12,24 @@
 #
 #############################################################################
 
-''' Define your function here. '''
 
+# Define function named swap_values that takes an unknown quantity of arguments.
+# This function creates an empty list variable, then loops through all arguments, appending each to the list.
+def swap_values(*args):
+    values = []
+    for v in args:
+        values.append(v)
+    
+    # reverse the list and print the first two values.
+    values.reverse()
+    print(values[0],values[1])
+
+# if dunder name equals dunder main supplied by test environment 
 if __name__ == '__main__':
-    ''' Type your code here. Your code must call the function. '''
+    
+    # Retreive two input values assigned to val1 and val2, pass variables to swap_values()
+    val1 = input()
+    val2 = input()
+        
+    swap_values(val1, val2)
+
