@@ -7,3 +7,17 @@
 #
 ##########################################################
 
+# receive user input of unknown quantity of variables
+user_input = input()
+
+# use list comprehension to parse variables and conver to integers
+tokens = [int(i) for i in user_input.split()]
+
+# assign variables for the average and max of user_input, then print
+avg_tokens = int(sum(tokens) / len(tokens))
+max_tokens = max(tokens)
+
+print(avg_tokens, max_tokens)
+
+#################################################
+# RESULT: 10/10

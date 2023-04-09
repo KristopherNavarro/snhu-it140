@@ -8,3 +8,19 @@
 #
 #######################################################################################
 
+# receive user input of unknown quantity of variables
+user_input = input()
+
+# use list comprehension to parse variables and convert to integers
+tokens = [int(i) for i in user_input.split()]
+
+# use another list comprehension to only add positive numbers
+# pass comprehension to the sorted() function.
+pos_tokens = sorted([i for i in tokens if i >= 0])
+
+# print result
+for token in pos_tokens:
+    print(token, end=' ')
+
+#######################################################################################
+# RESULT: 10/10
