@@ -4,9 +4,9 @@
 <i>Term:</i> <b>23EW4</b>
 
 Welcome! </p>
-This repository is a general collection of all files related to my classwork for IT-140 Introduction to Scripting. 
-Any files related to zyBooks prompts are appropriately named with corresponding section numbers, these can be found in the [zyBooks Labs](https://github.com/KristopherNavarro/snhu-it140/settings/branch_protection_rules/new?branch_name=main) directory.
-All files pertaining to the final class project, Text Based Game, can be found in the Class Project directory.
+This repository is a general collection of all files related to my classwork for SNHU class IT-140: Introduction to Scripting. 
+Any files related to zyBooks prompts are appropriately named with corresponding section numbers, these can be found in the [zyBooks Labs](https://github.com/KristopherNavarro/snhu-it140/tree/main/zyBooks%20Labs) directory.
+All files pertaining to the final class project, Text Based Game, can be found in the [Class Project](https://github.com/KristopherNavarro/snhu-it140/tree/main/Class%20Project%20-%20Text%20Based%20Game) directory.
 This includes a Jupyter Notebook where I collected and tested ideas for the final project, as well as the final project files.
 
 I welcome and encourage any feedback or questions, thank you!
