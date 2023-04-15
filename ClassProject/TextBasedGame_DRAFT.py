@@ -22,7 +22,7 @@ items = {
 movement_verbs = ('Go', 'Move', 'Head')
 action_verbs = ('Get', 'Take', 'Grab')
 obs_verbs = ('Look', 'See', 'Examine')
-directions = ('North', 'South', 'East', 'West')
+directions = ('North', 'South', 'East', 'West', 'Up', 'Down')
 
 current_room = 'Great Hall'
 inventory = {
