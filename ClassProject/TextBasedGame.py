@@ -15,17 +15,19 @@ from random import uniform
 #         elif len(breadcrumbs) > 0:
 #             return breadcrumbs[-1]
 
-
 health = 2  # Starting health, chances to face the Boss
 pages = 0  # increments with ever book page collected
 current_room = 'Entry'
 breadcrumbs = []
 moves = 0
-inventory = {
-    'Slot 1': '',
-    'Slot 2': '',
-    'Slot 3': ''}
 vanquished = False
+describe_the_room = False
+# inventory = {1: '',
+#              2: '',
+#              3: '',
+#              4: '',
+#              5: '',
+#              6: '',}
 
 map = {
     # First Floor
@@ -39,6 +41,8 @@ map = {
     'Grand Hall': {
         'Ascend': '2nd Floor Landing',
         'Climb': '2nd Floor Landing',
+        'Stairs': '2nd Floor Landing',
+        'Upstairs': '2nd Floor Landing',
         'Up': '2nd Floor Landing',
         'South': 'Entry',
         'East': 'Library',
@@ -93,7 +97,9 @@ map = {
         'East': 'Upstairs Hall',
         'West': 'Game Room',
         'Down': 'Grand Hall',
-        'Descend': 'Grand Hall'},
+        'Descend': 'Grand Hall',
+        'Stairs': 'Grand Hall',
+        'Downstairs': 'Grand Hall'},
     'Upstairs Hall': {
         'North': 'Master Suite',
         'South': 'Guest Room',
@@ -148,43 +154,93 @@ map_items = {
         'observed': False},
     }
 room_descriptions = {
-    'Entry': '''    You are in the Entry of Marrowood 
-  armed only with your wit and the incomplete spellbook.''',
-    'Grand Hall': '''    The Grand Hall is dimly lit from the outside 
-  ambient light. Before you is a Grand Staircase.''',
-    'Lounge': '',
-    'Library': '',
-    'Office': '',
-    'Dining Room': '',
-    'Kitchen': '',
-    'Pantry': '',
-    'Servant Hall': '',
-    'Stairwell': '',
-    'Sun Room': '',
-    'Garden': '',
-    'Servant Quarters': '',
-    'Hidden Room': '',
-    'Hedge Maze': '',
-    'Graveyard': '',
+    'Entry': '''      You are in the Entry of Marrowood, there is only 
+  one direction to go.
+__________________________________________________________''',
+    'Grand Hall': '''      The Grand Hall is dimly lit from the outside 
+  ambient light. Before you is a Grand Staircase.
+__________________________________________________________''',
+    'Lounge': '''      This room has a faint scent of tobacco. There are
+  furniture pieces meant for long conversations.
+__________________________________________________________''',
+    'Library': '''      The scent of old paper engulfs you. The walls are
+  lined with more books than most people would ever read
+  in a lifetime. 
+__________________________________________________________''',
+    'Office': '''      Papers are strewn across a large wooden desk in 
+  the middle of the room. One paper looks much older 
+  than  all of the others... 
+__________________________________________________________''',
+    'Dining Room': '''      A long and opulent room, with a table to match. 
+  Plates with food scraps have not been cleared, chairs
+  are knocked over and out of place.
+__________________________________________________________''',
+    'Kitchen': '''      This room is in wild disarray. Drawers pulled to
+  the ground, cutlery is all over the place. In the mess,
+  something catches your eye...
+__________________________________________________________''',
+    'Pantry': '''
+    
+__________________________________________________________''',
+    'Servant Hall': '''
+      This hall served as the primary path for the help
+  to scurry from their room to other important rooms. 
+  There is a Stairwell to the East.
+__________________________________________________________''',
+    'Stairwell': '''
+    
+__________________________________________________________''',
+    'Sun Room': '''
+    
+__________________________________________________________''',
+    'Garden': '''
+    
+__________________________________________________________''',
+    'Servant Quarters': '''Page 1
+    
+__________________________________________________________''',
+    'Hidden Room': '''
+    
+__________________________________________________________''',
+    'Hedge Maze': '''
+    
+__________________________________________________________''',
+    'Graveyard': '''Page 3
+    
+__________________________________________________________''',
 
     # 2nd floor
 
-    'Game Room': '',
-    'Den': '',
-    '2nd Floor Landing': '',
-    'Master Hall': '',
-    'Guest Room': '',
-    'Master Suite': '',
-    'Stairwell': '',
-    'Master Suite': '',
+    'Game Room': '''
+    
+__________________________________________________________''',
+    'Den': '''Page 2
+    
+__________________________________________________________''',
+    '2nd Floor Landing': '''
+      A long balcony overlooking the Grand Hall. 
+__________________________________________________________''',
+    'Master Hall': '''
+    
+__________________________________________________________''',
+    'Guest Room': '''Page 6
+    
+__________________________________________________________''',
+    'Master Suite': '''
+    
+__________________________________________________________''',
+    'Stairwell': '''
+    
+__________________________________________________________''',
 
     # 3rd Floor
 
-    'Attic': '',
-    'Stairwell': '',
-    'Alter': '',
-    'Attic': '',
-    'Hatch': ''}
+    'Attic': '''
+    
+__________________________________________________________''',
+    'Stairwell': '''
+    
+__________________________________________________________''',}
 bad_moves = [
     'Only ghosts can walk through walls, try again.',
     'Your vision may be sharp, but not your sight, try again.',
@@ -193,10 +249,12 @@ bad_moves = [
     'You won\'t vanquish much in that direction, try again.'
 ]
 
-movement_keys = {'Go', 'Move', 'Head', 'Travel', 'Step', 'Trek', 'Advance', 'Proceed', 'Run', 'Walk', 'Crawl', 'Climb', 'Descend', 'Ascend'}
-heading_keys = {'North', 'South', 'East', 'West', 'Up', 'Down', 'Descend', 'Ascend', 'Staircase', 'Enter'}
-action_keys = {'Get', 'Take', 'Grab'}
-observation_keys = {'Look', 'See', 'Examine'}
+movement_keys = {'Go', 'Move', 'Head', 'Travel', 'Step', 'Trek', 'Advance',
+                 'Proceed', 'Run', 'Walk', 'Crawl', 'Climb', 'Descend', 'Ascend'}
+heading_keys = {'North', 'South', 'East', 'West', 'Up', 'Down', 'Descend', 'Ascend',
+                'Staircase', 'Enter', 'Stairs', 'Upstairs', 'Downstairs'}
+action_keys = {'Get', 'Take', 'Grab', 'Acquire', 'Obtain'}
+observation_keys = {'Look', 'See', 'Examine', 'Observe', 'Inspect', 'Scan'}
 
 
 
@@ -250,7 +308,7 @@ def introduction():
     os.system('cls')
     print(r'''
   <@)>^-^-    Welcome to Marrowood Mansion!    -^-^-<(@>
-
+__________________________________________________________
                         ͜^͜^͜^͜ 
            !͜͜!͜͜!͜͜!͜͜/ _    _\͜͜!͜͜!͜͜!͜͜! 
           /͜͜/͜͜/͜͜/͜͜/  <( )>  \͜͜\͜͜\͜͜\͜͜\    
@@ -268,12 +326,10 @@ def introduction():
                        /- - - -\
                       /- - - - -\       ''')
     sleep(1.1)
-    print('''
-                     Press ENTER...''', end='')
-    input()
+    input('                     Press ENTER...')
 
     os.system('cls')
-    print(rf'''
+    print('''
   <@)>^-^-    Welcome to Marrowood Mansion!    -^-^-<(@>
 __________________________________________________________
 ''')
@@ -286,11 +342,10 @@ __________________________________________________________
 
 ''')
     sleep(1.1)
-    print('''                Press ENTER to continue...''', end='')
-    input()
+    input('                Press ENTER to continue...')
 
     os.system('cls')
-    print(r'''
+    print('''
   <@)>^-^-    Welcome to Marrowood Mansion!    -^-^-<(@>
 __________________________________________________________
 ''')
@@ -302,23 +357,23 @@ __________________________________________________________
 
       Ignorant of the power the spells within possessed, 
   the party has unleashed a demonic being upon our world. 
-  Weak from materialization, the demon has retreated to 
-  the Altar room after chasing the party guests from the 
-  house. In the mayhem to escape the demon... 
+  The demon has retreated to the Altar room after chasing 
+  the party guests from the house. 
+      In the mayhem to escape the demon... 
 
   <@)>-^-^--~--   SIX PAGES WERE LOST    -^-~-^-`^-<(@>
-  ''')
+
+''')
     sleep(1.1)
-    print('''
-                Press ENTER to continue...''', end='')
-    input()
+    input('             Press ENTER to continue...')
 
     os.system('cls')
-    print(r'''
+    print('''
   <@)>^-^-    Welcome to Marrowood Mansion!    -^-^-<(@>
 __________________________________________________________
 ''')
-    Typewriter.fast('''    It is your quest to find the missing pages strewn
+    Typewriter.fast('''
+      Your quest is to find the missing pages scattered
   throughout the mansion before making your way to the 
   Altar Room to vanquish the demon lurking within.
 
@@ -326,11 +381,10 @@ __________________________________________________________
   armed only with your wit, a bag, and the incomplete 
   Grimoire of Pope Honorius... 
                                 -~^-~-^-`^-<(@
+
 ''')
     sleep(1.1)
-    print('''
-                Press ENTER to begin...''', end='')
-    input()
+    input('                Press ENTER to begin...')
 
 def display_header(arg):
     os.system('cls')  # This will keep the screen clean
@@ -343,19 +397,68 @@ __________________________________________________________
 ---------------------------------------------------------- ''', flush=True)
 
 def help():
-    display_header()
-    print('''
-  This is the help filler...
-    ''')
-    input()
-    pass
+    display_header('HELP')
+    print('''  Navigating Rooms--                
+      Enter commands like 'move', 'go', 'walk', etc., 
+      along with a cardinal direction.
+      [ EX:  move east  ] 
+        
+  Navigating Stairs--  
+      Use commands like 'go', 'climb', 'head', etc., 
+      along with the stair direction you wish to go. 
+      [ EX:  climb the stairs  ]
+                                                    1 of 3  
+__________________________________________________________''', flush=True)
+    input('                Press ENTER to continue...')
 
-def room_observation():
+    display_header('HELP')
+    print('''  Observing--                
+      Commands like 'look', 'inspect', 'scan', etc.
+      [ EX:  inspect the room  ]
+      [      look at the room  ]
+
+  Actions--
+      Commands like 'take', 'get', 'grab', etc.
+      [ EX:  grab the page  ]
+      [      acquire page   ]
+                                                    2 of 3
+__________________________________________________________''', flush=True)
+    input('                Press ENTER to continue...')
+
+    display_header('HELP')
+    print('''  Gameplay--               
+      You have 2 lives.
+      
+      You must collect all 6 pages before facing the 
+        demon, or suffer the consequences.
+      
+      Pages are only visible if you look for them.
+      
+      Type 'help' to get these instructions again.
+                                                    3 of 3
+__________________________________________________________''', flush=True)
+    input('                Press ENTER to continue...')
+
+def room_observation(room):
+    global map_items
+    global describe_the_room
+
+    print('\n', room_descriptions[room], '\n', flush=True)
+    describe_the_room = False
+
     try:
-        print('\n',room_descriptions[current_room])
-        input('                Press ENTER to continue...')
+        if map_items[room]['available'] == False:
+            print('  There is nothing to see here.','\n', flush=True)
+
+        else:
+            map_items[room]['observed'] = True
+            sleep(2)
+            print(f'  You found a page!', '\n', flush=True)
+            sleep(1)
+
     except KeyError:
-        return ''
+        pass
+    pass
 
 def movement(token):
     global current_room
@@ -419,7 +522,7 @@ def movement(token):
       You find yourself back in the {map[current_room]['Trap Door']}. 
       
       Next time you won't be so lucky...
-__________________________________________________________''')
+__________________________________________________________''', flush=True)
             input('                Press ENTER to continue...')
             current_room = map[current_room]['Trap Door']
         elif health <= 1:
@@ -440,25 +543,12 @@ __________________________________________________________''')
             breadcrumbs.append(last_room)
 
     except KeyError:
-        print(f'\n{random.choice(bad_moves)} \n')
+        print(f'\n{random.choice(bad_moves)} \n', flush=True)
         sleep(2)
     pass
 
-def view():
-    global map_items
-
-    #room_observation()
-
-    try:
-        if map_items[current_room]['available'] == False:
-            print('  There is nothing to see here.')
-            sleep(1.5)
-        else:
-            map_items[current_room]['observed'] = True
-            print(f'  You found a page!')
-            sleep(1.8)
-    except KeyError:
-        pass
+def hedge_maze():
+    ''' not yet defined, future addition'''
     pass
 
 def act():
@@ -466,32 +556,35 @@ def act():
     global pages
     try:
         if map_items[current_room]['observed'] == False:
-            print('  Try looking around first.')
+            print('\n','  Try looking around first.', flush=True)
             sleep(2)
             pass
         elif map_items[current_room]['available'] == True:
             pages += 1
             map_items[current_room]['available'] = False
 
-            print(f'  You now have {map_items[current_room]["item"]}!')
+            display_header(current_room)
+            print(f'  You have {map_items[current_room]["item"]}!...',end='', flush=True)
 
             if 6 - pages == 1:
-                print(f'  There is {6 - pages} page left!')
+                print(f' {6 - pages} page left.', flush=True)
             elif 6- pages == 0:
-                print(f'  There are {6 - pages} pages left! Head to the Altar Room!')
+                print(f' You have all the pages, head to the Altar Room!', flush=True)
             else:
-                print(f'  There are {6 - pages} pages left to find.')
-            sleep(3.3)
+                print(f' {6 - pages} pages left.', flush=True)
+            sleep(2.5)
         else:
-            print('  There is nothing here.')
+            print('  There is nothing to take.', flush=True)
             sleep(1.5)
     except KeyError:
-        print('  There is nothing to here.')
+        print('  There is nothing to take.', flush=True)
         sleep(1.5)
     pass
 
 
 # introduction()
+
+# help()
 
 while health > 0:
     if vanquished == True:
@@ -499,25 +592,31 @@ while health > 0:
 
     display_header(current_room)
 
+    if describe_the_room == True:
+        if current_room == 'Stairwell':
+            pass
+        room_observation(current_room)
+
     user_input = str(input('What would you like to do? ')).title().split()
 
     heading = list(set(user_input) & heading_keys)
     observe = list(set(user_input) & observation_keys)
     action = list(set(user_input) & action_keys)
 
-    if 'Quit' in user_input:
+    if 'Quit' in user_input or 'Exit' in user_input:
         break
     elif 'Help' in user_input:
         help()
     elif len(heading) > 0:
         movement(heading)
     elif len(observe) > 0:
-        view()
+        describe_the_room = True
     elif len(action) > 0:
         act()
     else:
-        print('\n I don\'t understand. Try again.')
+        print('\n  I don\'t understand. Try again.', flush=True)
         sleep(1.5)
+    continue
 
 if health == 0:
     os.system('cls')
@@ -536,7 +635,10 @@ __________________________________________________________
             @)>^-~^-`^-~-- .... --^-~^-~`^-<(@
 
 __________________________________________________________ 
+
+
 ''', flush=True)
+
 elif vanquished == True:
     print(f'''
   @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
@@ -549,11 +651,13 @@ __________________________________________________________
   incantations cast the demon back to the Netherworld!
 
 
-           @)>^-~^-`^-~-- YOU WIN! --^-~^-~`^-<(@
+       @)>^-~^-`^-~--   YOU WIN!   --^-~^-~`^-<(@
 
 
-__________________________________________________________''')
+__________________________________________________________
 
+
+''', flush=True)
 
 else:
     os.system('cls')
@@ -570,4 +674,6 @@ __________________________________________________________
 
 
 __________________________________________________________ 
+
+
 ''', flush=True)
