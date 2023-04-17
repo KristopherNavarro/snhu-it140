@@ -1,11 +1,23 @@
-# Room layout for Text Based Game
+# Created by:   Kristopher Navarro
+# GitHub repo:  https://github.com/KristopherNavarro/snhu-it140
+# Class:        SNHU IT-140-J4175
+# Instructor:   Patrick Moore
+# Term:         23EW4
+# Date:         16 April 2023
+#
+###########################################################################
 
+# import packages to clean up gameplay and add some flair.
+# 'os' is used for clearing the screen often
+# 'sleep' is used to delay 'os' in most cases
+# 'random' is only used to select from the bad_moves list
+# 'uniform' is used in the Typewriter class for visualization.
 import os
 from time import sleep
 import random as random
 from random import uniform
 
-# def secrets(item):
+# def secrets(item):            # Unused in this deployment, for future use.
 #     secrets_map = {
 #         'Servant Quarters': 'Hidden Room',
 #         'Office': 'Secret Passage'}
@@ -15,20 +27,22 @@ from random import uniform
 #         elif len(breadcrumbs) > 0:
 #             return breadcrumbs[-1]
 
-health = 2  # Starting health, chances to face the Boss
-pages = 0  # increments with ever book page collected
-current_room = 'Entry'
-breadcrumbs = []
-moves = 0
-vanquished = False
-describe_the_room = False
-# inventory = {1: '',
+# Primary variables for basic functions
+health = 2      # Starting lives, chances to face the demon. Decrements if pages != 6
+pages = 0       # increments with ever book page collected
+current_room = 'Entry'      # stores the value for current room from movement
+breadcrumbs = []            # stores previous rooms in order
+moves = 0                   # increments with ever valid move
+vanquished = False          # used to break the gameplay loop if user has 6 pages when entering the attic
+describe_the_room = False   # used to printing the room_description value
+# inventory = {1: '',       # unused variable, for future deployment
 #              2: '',
 #              3: '',
 #              4: '',
 #              5: '',
 #              6: '',}
 
+# map is a dictionary of the room layout
 map = {
     # First Floor
 
@@ -121,6 +135,7 @@ map = {
         'North': 'Attic',
         'Trap Door': 'Grand Hall'}
     }
+# map_items is a dictionary of items per room with validation key:value pairs
 map_items = {
     'Servant Quarters': {
         'available': True,
@@ -153,12 +168,13 @@ map_items = {
         'page': True,
         'observed': False},
     }
+# a dictionary containing the descriptions for each room
 room_descriptions = {
     'Entry': '''      You are in the Entry of Marrowood, there is only 
   one direction to go.
 __________________________________________________________''',
-    'Grand Hall': '''      The Grand Hall is dimly lit from the outside 
-  ambient light. Before you is a Grand Staircase.
+    'Grand Hall': '''      The Grand Hall is illuminated from the evening's 
+  full Moon. Before you is a Grand Staircase.
 __________________________________________________________''',
     'Lounge': '''      This room has a faint scent of tobacco. There are
   furniture pieces meant for long conversations.
@@ -169,86 +185,99 @@ __________________________________________________________''',
 __________________________________________________________''',
     'Office': '''      Papers are strewn across a large wooden desk in 
   the middle of the room. One paper looks much older 
-  than  all of the others... 
+  than all of the others... 
 __________________________________________________________''',
     'Dining Room': '''      A long and opulent room, with a table to match. 
   Plates with food scraps have not been cleared, chairs
   are knocked over and out of place.
 __________________________________________________________''',
-    'Kitchen': '''      This room is in wild disarray. Drawers pulled to
-  the ground, cutlery is all over the place. In the mess,
-  something catches your eye...
+    'Kitchen': '''      This room is in wild disarray. Drawers pulled out, 
+  cutlery is all over the place. In the mess, something 
+  old catches your eye...
 __________________________________________________________''',
-    'Pantry': '''
-    
+    'Pantry': '''      The shelves are nearly bare. The new tenants may 
+  have over extended themselves, in more than one way.
 __________________________________________________________''',
-    'Servant Hall': '''
-      This hall served as the primary path for the help
-  to scurry from their room to other important rooms. 
-  There is a Stairwell to the East.
+    'Servant Hall': '''      The hairs on your neck begin to stand on end. The 
+  air feels strange here. There is a Stairwell toward 
+  the East.
 __________________________________________________________''',
-    'Stairwell': '''
-    
+    'Sun Room': '''      Tonight, this is a Moon Room. You are bathed in 
+  the light of the full Moon. What else could be possible
+  tonight?
 __________________________________________________________''',
-    'Sun Room': '''
-    
+    'Garden': '''      Outside on the vast estate grounds. In the 
+  moonlight you see strange shrubbery to the North.
 __________________________________________________________''',
-    'Garden': '''
-    
+    'Servant Quarters': '''      Chills reverberate down your spine. There is 
+  something unsettling about this room. As you turn to 
+  leave, something catches your eye...
 __________________________________________________________''',
-    'Servant Quarters': '''Page 1
-    
+    'Hidden Room': '''      What was this place? There are stains and gouges 
+  on the walls. 
 __________________________________________________________''',
-    'Hidden Room': '''
-    
+    'Hedge Maze': '''      The legendary Marrowood Hedge Maze has fallen to a 
+  state of disrepair, making it easy to see a path 
+  through. But a path is not all you see, there is 
+  something to the North. 
 __________________________________________________________''',
-    'Hedge Maze': '''
-    
-__________________________________________________________''',
-    'Graveyard': '''Page 3
-    
+    'Graveyard': '''      The rumors were true, this is the Marrowood Family 
+  Cemetary. As you meander through the headstones you 
+  step on something...
 __________________________________________________________''',
 
     # 2nd floor
 
-    'Game Room': '''
-    
+    'Game Room': '''      At one time this room entertained men of importance
+  from around the country. At this time it entertains
+  vacancy. The room is empty.
 __________________________________________________________''',
-    'Den': '''Page 2
-    
+    'Den': '''      This room is the sanctuary away from the business
+  of the socialites. In the dim light you see something
+  protruding from a vent... 
 __________________________________________________________''',
     '2nd Floor Landing': '''
-      A long balcony overlooking the Grand Hall. 
+      A long balcony overlooking the Grand Hall, the main
+  connection between the entertaining wing and the 
+  sleeping quarters.  
 __________________________________________________________''',
-    'Master Hall': '''
-    
+    'Upstairs Hall': '''      This hall connects the sleeping quarters for 
+  masters and guests, lined with reminders of grandeur. 
+  There is a Stairwell toward the East.
 __________________________________________________________''',
-    'Guest Room': '''Page 6
-    
+    'Guest Room': '''      Many regal guests have stayed in this room. There 
+  are rumors of hidden compartment throughout its wood 
+  floors and elaborate panelling. But, there is something
+  else that has your attention...
 __________________________________________________________''',
-    'Master Suite': '''
-    
-__________________________________________________________''',
-    'Stairwell': '''
-    
+    'Master Suite': '''      If these walls could talk. There is a fully stuffed
+  lion and ewe on one end of the room. 
 __________________________________________________________''',
 
     # 3rd Floor
 
     'Attic': '''
-    
+      Crates, thick dust, and cobwebs obscure the 
+  labrynth that is the Attic. The air is thick and spells
+  fresh and ancient at the same time. You must be close.  
 __________________________________________________________''',
     'Stairwell': '''
-    
-__________________________________________________________''',}
+      You are in the East Stairwell. Only way to go is 
+  up or down... or back the way you came.
+__________________________________________________________''',
+}
+# a list of decline responses for invalid moves
 bad_moves = [
     'Only ghosts can walk through walls, try again.',
     'Your vision may be sharp, but not your sight, try again.',
     'Too much of that and we\'ll all be lost, try again.',
     'Something is amiss, try again.',
-    'You won\'t vanquish much in that direction, try again.'
+    'You won\'t vanquish much in that direction, try again.',
+    'Something went bump in the night, it was you. Try again.',
+    'Not all who wonder are lost, but you surely are. Try again.'
 ]
 
+# the following sets contain possible responses for movement, heading, action, and observation
 movement_keys = {'Go', 'Move', 'Head', 'Travel', 'Step', 'Trek', 'Advance',
                  'Proceed', 'Run', 'Walk', 'Crawl', 'Climb', 'Descend', 'Ascend'}
 heading_keys = {'North', 'South', 'East', 'West', 'Up', 'Down', 'Descend', 'Ascend',
@@ -257,28 +286,25 @@ action_keys = {'Get', 'Take', 'Grab', 'Acquire', 'Obtain'}
 observation_keys = {'Look', 'See', 'Examine', 'Observe', 'Inspect', 'Scan'}
 
 
-
-
-
+# Typewriter is for visualization purposes. See docstring for more info:
 class Typewriter:
     ''' Iterates over a string and prints with a varying pause between each character to mimmick a typewriter.
 
-    All methods append a UTC timestamp to a global list named 'variability' at the beginning of each iteration.
-
     --slow(self, stop=''):
-        takes
+        takes a string and stop value as arguments, stop is automatically set to an empty string
         prints at a slow speed
 
-    -- med():
+    -- med(self, stop=''):
+        takes a string and stop value as arguments, stop is automatically set to an empty string
         prints at a medium speed
 
-    -- fast():
+    -- fast(self, stop=''):
+        takes a string and stop value as arguments, stop is automatically set to an empty string
         prints at a fast speed
 
     '''
 
     def slow(self, stop=''):
-        global variability
         for ch in self[:-1]:
             print(ch, end='', flush=True)
             sleep(uniform(0.1, 0.25))
@@ -296,14 +322,17 @@ class Typewriter:
             sleep(uniform(0.001, 0.01))
         print(self[-1], end=stop, flush=True)
 
+
+# used for cleaning up visualizations. See docstring for more info.
 def centered(*args, spaces):
-    ''' Concatenates multiple arguments and centers based on the supplied totoal space width as spaces'''
+    ''' Concatenates multiple arguments and centers based on the supplied total space width as spaces'''
     arg_list = []
     for arg in args:
         arg_list.append(str(arg))
     text = ''.join(arg_list)
     return text.center(spaces)
 
+# This is used to clean up code space and create 'slides' for an introduction. Mostly just simple visuals.
 def introduction():
     os.system('cls')
     print(r'''
@@ -386,9 +415,11 @@ __________________________________________________________
     sleep(1.1)
     input('                Press ENTER to begin...')
 
+
+# This is the primary header visual for the game. Takes one string argument.
 def display_header(arg):
-    os.system('cls')  # This will keep the screen clean
-    var = 'You are in the '
+    os.system('cls')            # This will keep the screen clean
+    var = 'You are in the '     # required for the centered() function
 
     print(f'''
   @)>^-~-`- {centered(var, arg, spaces=33)} -~^-`^-<(@
@@ -396,7 +427,9 @@ __________________________________________________________
     Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
 ---------------------------------------------------------- ''', flush=True)
 
-def help():
+
+# simple slide based visualization for the Help screen, describes gameplay
+def help_menu():
     display_header('HELP')
     print('''  Navigating Rooms--                
       Enter commands like 'move', 'go', 'walk', etc., 
@@ -439,13 +472,20 @@ __________________________________________________________''', flush=True)
 __________________________________________________________''', flush=True)
     input('                Press ENTER to continue...')
 
+
+# This handles looking around a room, retrieving values from room_descriptions, as well as validating
+# retrievable items have been observed first before being able to be retrieved. Initiated by an if
+# statement looking for describe_the_room == True
 def room_observation(room):
     global map_items
     global describe_the_room
 
+    # prints the appropriate room_description value
     print('\n', room_descriptions[room], '\n', flush=True)
-    describe_the_room = False
+    describe_the_room = False       # resets to False
 
+    # Checks if there is an available item in the room
+    # prints validation if item is present
     try:
         if map_items[room]['available'] == False:
             print('  There is nothing to see here.','\n', flush=True)
@@ -456,18 +496,25 @@ def room_observation(room):
             print(f'  You found a page!', '\n', flush=True)
             sleep(1)
 
+    # Handles any KeyErrors by ignoring and moving on
     except KeyError:
         pass
     pass
 
+
+# This handles all gameplay movements around the map, takes one argument
 def movement(token):
     global current_room
     global moves
 
-    last_room = current_room
+    last_room = current_room        # stores a copy of current_room
 
+    # Sub-function that takes care of the issues of traversing between floors via the map Stairwell
+    # takes one argument
     def stairs(arg):
         global current_room
+
+        # Internal dictionary, maps movement via Stairwell
         stairwell = {'floor1': {
                         'West': 'Servant Hall',
                         'Up': 'Upstairs Hall',
@@ -489,6 +536,8 @@ def movement(token):
                         'Downstairs': 'Upstairs Hall',
                         'Descend': 'Upstairs Hall'}
                     }
+
+        # Validates which floor the user is on and handles the stairs accordingly
         try:
             if breadcrumbs[-1] == 'Servant Hall':
                 current_room = stairwell['floor1'][arg]
@@ -499,19 +548,23 @@ def movement(token):
             elif breadcrumbs[-1] == 'Attic':
                 current_room = stairwell['floor3'][arg]
         except KeyError:
-            return KeyError
+            return KeyError     # if KeyError is raised, returns to parent function
 
+    # Sub-function that validates whether all pages have been collected
+    # takes one argument
     def all_pages(arg):
         global health
         global current_room
         global vanquished
         global moves
 
-        moves += 1
+        moves += 1      # increments moves
 
+        # returns the user to the Grand Hall if pages != 6 and lives > 1
         if pages != 6 and health > 1:
-            health -= 1
+            health -= 1     # decrements health
 
+            # Moves user to Attic for theatrical purpose, prints explanation and warning
             current_room = map[current_room][arg]
             display_header(current_room)
             print(f'''        As you search the pages for the incantations you 
@@ -523,15 +576,18 @@ def movement(token):
       
       Next time you won't be so lucky...
 __________________________________________________________''', flush=True)
-            input('                Press ENTER to continue...')
-            current_room = map[current_room]['Trap Door']
-        elif health <= 1:
-            health -= 1
+            input('                Press ENTER to continue...')     # waits for user input to continue
+            current_room = map[current_room]['Trap Door']           # returns user to Grand Hall
+        elif pages != 6 and health == 1:
+            health -= 1     # decrements health to zero, result: breaking the gameplay loop, defeat screen displayed
             pass
+        # if pages equals 6 then loop is broken by vanquished == True, victory screen is displayed
         elif pages == 6 and health > 0:
             vanquished = True
             pass
 
+    # Main movement function, checks if the current room is Stairwell or Attic and applies
+    # the correct sub-function
     try:
         if current_room == 'Stairwell':
             stairs(list(token)[0])
@@ -542,138 +598,154 @@ __________________________________________________________''', flush=True)
             moves += 1
             breadcrumbs.append(last_room)
 
+    # if movement is invalid resulting in a KeyError, prints a random response from bad_moves
     except KeyError:
         print(f'\n{random.choice(bad_moves)} \n', flush=True)
         sleep(2)
     pass
 
-def hedge_maze():
-    ''' not yet defined, future addition'''
-    pass
+# def hedge_maze():       # unused in this deployment,
+#     ''' not yet defined, future addition
+#     In a future iteration this will handle either a sub-map or shifting directions to disorient the user'''
+#     pass
 
+# This handles the action tasks. i.e. taking items
 def act():
     global map_items
     global pages
+
+    # try block in case of KeyError
     try:
+        # Checks map_items for current_room and if item has been observed
+        # If not observed, prints directions to user
         if map_items[current_room]['observed'] == False:
             print('\n','  Try looking around first.', flush=True)
             sleep(2)
             pass
+        # if already observed, checks if item is available to be taken
+        # if available, increments pages by 1 and sets availability of item to False
         elif map_items[current_room]['available'] == True:
             pages += 1
             map_items[current_room]['available'] = False
 
+            # prints the display_header and confirmation of which page was acquired
             display_header(current_room)
             print(f'  You have {map_items[current_room]["item"]}!...',end='', flush=True)
 
+            # if statment that informs the user of remaining pages, if any
             if 6 - pages == 1:
-                print(f' {6 - pages} page left.', flush=True)
+                print(f'  {6 - pages} page left.', flush=True)
             elif 6- pages == 0:
-                print(f' You have all the pages, head to the Altar Room!', flush=True)
+                print(f'  You have all the pages, head to the Altar!', flush=True)
             else:
-                print(f' {6 - pages} pages left.', flush=True)
+                print(f'  {6 - pages} pages left.', flush=True)
             sleep(2.5)
+        # else item has been taken or no item present, informs user with a printout.
         else:
             print('  There is nothing to take.', flush=True)
             sleep(1.5)
+    # If here is a KeyError, then there is no item
     except KeyError:
         print('  There is nothing to take.', flush=True)
         sleep(1.5)
     pass
 
+if __name__ == '__main__':
 
-# introduction()
+    introduction()      # call to introduction(), displays intro slides for user
 
-# help()
+    help_menu()         # call to help_menu(), displays gameplay info for user
 
-while health > 0:
-    if vanquished == True:
-        break
+    # Begin the while loop, continue as long as health is greater than zero
+    while health > 0:
+        if vanquished == True:  # Breaks loop if user has acquired all pages and current_room is Attic
+            break
 
-    display_header(current_room)
+        # prints out the main display_header with passed current_room
+        display_header(current_room)
 
-    if describe_the_room == True:
-        if current_room == 'Stairwell':
-            pass
-        room_observation(current_room)
+        # checks if the room_description value is needed, prints if it is.
+        if describe_the_room == True:
+            if current_room == 'Stairwell':
+                pass
+            room_observation(current_room)
 
-    user_input = str(input('What would you like to do? ')).title().split()
+        # requests direction from user, formats as a string, titlecase, and splits into a list.
+        user_input = str(input('What would you like to do? ')).title().split()
 
-    heading = list(set(user_input) & heading_keys)
-    observe = list(set(user_input) & observation_keys)
-    action = list(set(user_input) & action_keys)
+        # compares user_input to gameplay sets, parses accordingly by heading, observation, or action
+        heading = list(set(user_input) & heading_keys)
+        observe = list(set(user_input) & observation_keys)
+        action = list(set(user_input) & action_keys)
 
-    if 'Quit' in user_input or 'Exit' in user_input:
-        break
-    elif 'Help' in user_input:
-        help()
-    elif len(heading) > 0:
-        movement(heading)
-    elif len(observe) > 0:
-        describe_the_room = True
-    elif len(action) > 0:
-        act()
-    else:
-        print('\n  I don\'t understand. Try again.', flush=True)
-        sleep(1.5)
-    continue
+        # checks if user entered Quit or Exit, ends gameplay by breaking loop
+        if 'Quit' in user_input or 'Exit' in user_input:
+            break
+        elif 'Help' in user_input:      # calls help_menu if user enters Help
+            help_menu()
+        elif len(heading) > 0:          # call for movement() if user has entered movement_keys
+            movement(heading)
+        elif len(observe) > 0:
+            describe_the_room = True    # sets describe_the_room to True if user entered observation_keys
+        elif len(action) > 0:
+            act()                       # call for act() if user entered action_keys
 
-if health == 0:
-    os.system('cls')
-    print(f'''
-  @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
-__________________________________________________________
-    Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
----------------------------------------------------------- 
+        # if user entered an invalid command then alerts user and continues loop
+        else:
+            print('\n  I don\'t understand. Try again.', flush=True)
+            sleep(1.5)
+        continue
 
-      With pages still missing, the spells you require 
-  are incomplete. Your weak attempts to attack the demon 
-  only antagonize it, and it devours you.
-                  
-                  Better luck next time!
+    # Loop is broken: Checks for how end screen should display
 
-            @)>^-~^-`^-~-- .... --^-~^-~`^-<(@
+    if health == 0:             # User was defeated
+        os.system('cls')
+        print(f'''
+      @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
+    __________________________________________________________
+        Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
+    ---------------------------------------------------------- 
+    ''')
+        Typewriter.fast('''      With pages still missing, the spells you require 
+      are incomplete. Your weak attempts to attack the demon 
+      only antagonize it, and it devours you.
+                      
+                      Better luck next time!
+    
+                @)>^-~^-`^-~-- .... --^-~^-~`^-<(@
+    
+    
+    ''')
 
-__________________________________________________________ 
+    elif vanquished == True:        # User was successful
+        print(f'''
+      @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
+    __________________________________________________________
+        Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
+    ---------------------------------------------------------- 
+    ''')
+        Typewriter.fast('''      With the complete Grimoire of Pope Honorius, your 
+      incantations cast the demon back to the Netherworld!
+    
+    
+           @)>^-~^-`^-~--   YOU WIN!   --^-~^-~`^-<(@
+    
+    
+    
+    ''')
 
-
-''', flush=True)
-
-elif vanquished == True:
-    print(f'''
-  @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
-__________________________________________________________
-    Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
----------------------------------------------------------- 
-
-
-      With the complete Grimoire of Pope Honorius, your 
-  incantations cast the demon back to the Netherworld!
-
-
-       @)>^-~^-`^-~--   YOU WIN!   --^-~^-~`^-<(@
-
-
-__________________________________________________________
-
-
-''', flush=True)
-
-else:
-    os.system('cls')
-    print(f'''
-  @)>^-~-`- {centered('Goodbye!', spaces=33)} -~^-`^-<(@
-__________________________________________________________
-    Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
----------------------------------------------------------- 
-
-                
-                  Thank you for playing!
-
-            @)>^-~^-`^-~-- .... --^-~^-~`^-<(@
-
-
-__________________________________________________________ 
-
-
-''', flush=True)
+    else:                       # User ended game voluntarily
+        os.system('cls')
+        print(f'''
+      @)>^-~-`- {centered('Goodbye!', spaces=33)} -~^-`^-<(@
+    __________________________________________________________
+        Moves [{centered(moves, spaces=3)} ]    ---<--< {'{:<2}'.format('*' * health)} >-->----    Pages [{centered(pages, spaces=3)}]
+    ---------------------------------------------------------- 
+    ''')
+        Typewriter.fast('''                  Thank you for playing!
+    
+                @)>^-~^-`^-~-- .... --^-~^-~`^-<(@
+     
+    
+    
+    ''')
