@@ -32,9 +32,6 @@ user_input2 = input()
 # Split second input into a list for easy replacement
 sentence = user_input2.split()
 
-##########################################################################################
-# RESULT: 10/10
-
 # Empty string for concatenating the final sentence
 replacement_sentence = ''
 
@@ -52,3 +49,6 @@ for word in sentence:
 
 # Print the final replacement sentence, strip any whitespace from the end of the sentence
 print(replacement_sentence.rstrip())
+
+##########################################################################################
+# RESULT: 10/10
