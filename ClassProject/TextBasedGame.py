@@ -718,6 +718,7 @@ if __name__ == '__main__':
     ''')
 
     elif vanquished == True:        # User was successful
+        os.system('cls')
         print(f'''
       @)>^-~-`- {centered('Thank you for playing!', spaces=33)} -~^-`^-<(@
     __________________________________________________________
